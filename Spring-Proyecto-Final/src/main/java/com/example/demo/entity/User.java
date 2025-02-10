@@ -1,8 +1,8 @@
 package com.example.demo.entity;
 
-import java.awt.print.Book;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,21 +21,26 @@ public class User {
 	// Identificador único del usuario
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Schema(description = "Identificador único del usuario")
     private Long id;
     
     // Nombre de usuario
     // Implementamos que no pueda ser null y un minimo y maximo de caracteres
+    @Schema(description = "Nombre de usuario", example = "john_doe", required = true, minLength = 3, maxLength = 50)
     private String userName;
     
     // Contraseña del usuario
     // Implementada un minimo de 6 caracteres y imposibilita el que sea null
+    @Schema(description = "Contraseña del usuario", example = "Password123", required = true, minLength = 6)
     private String password;
     
     // Rol del usuario
+    @Schema(description = "Rol del usuario", example = "ADMIN", required = true)
     private String role; 
     
     @ManyToMany  // Relación muchos a muchos con libros
-    private List<Book> books;
+    @Schema(description = "Lista de libros asociados al usuario", required = false)
+    private List<Libro> libro;
 
     /**
      * Obtiene el identificador único del usuario.
@@ -109,11 +114,11 @@ public class User {
         this.role = role;
     }
     
-    public List<Book> getBooks() {
-        return books;
+    public List<Libro> getBooks() {
+        return libro;
     }
 
-    public void setBooks(List<Book> books) {
-        this.books = books;
+    public void setBooks(List<Libro> libro) {
+        this.libro = libro;
     }
 }

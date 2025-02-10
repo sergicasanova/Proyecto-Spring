@@ -46,7 +46,7 @@ public class BibliotecaService {
     public Biblioteca addLibroToBiblioteca(Long bibliotecaId, Libro libro) { 
         Biblioteca biblioteca = bibliotecaRepository.findById(bibliotecaId)
                 .orElseThrow(() -> new RuntimeException("Biblioteca no encontrada"));
-        libro.setLibrary(biblioteca);
+        libro.setBiblioteca(biblioteca);
         return bibliotecaRepository.save(biblioteca);  
     }
 }

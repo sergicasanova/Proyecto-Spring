@@ -24,6 +24,10 @@ import com.example.demo.security.JwtProvider;
 import com.example.demo.security.SecurityUtils;
 import com.example.demo.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -52,6 +56,9 @@ public class AuthController {
      * @param request      Objeto HttpServletRequest para obtener información de la solicitud.
      * @return ResponseEntity con el JWT y los detalles del usuario, o un mensaje de error.
      */
+    @Operation(summary = "Iniciar sesión de un usuario", description = "Autentica al usuario con su nombre de usuario y contraseña, y genera un JWT.")
+    @ApiResponse(responseCode = "200", description = "Inicio de sesión exitoso. Devuelve el JWT generado.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtDto.class)))
+    @ApiResponse(responseCode = "400", description = "Usuario o contraseña incorrectos.")
     @PostMapping("/login")
     public ResponseEntity<RespuestaDto> login(@RequestBody LoginUsuario loginUsuario, HttpServletRequest request){
 

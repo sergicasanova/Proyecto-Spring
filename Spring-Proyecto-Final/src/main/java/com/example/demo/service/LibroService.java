@@ -47,7 +47,7 @@ public class LibroService {
 
     // Agregar un libro a una biblioteca
     public Libro addLibroToLibrary(Long libraryId, Libro libro) {
-        libro.setLibrary(bibliotecaRepository.findById(libraryId).orElseThrow(() -> new RuntimeException("Library not found")));
+        libro.setBiblioteca(bibliotecaRepository.findById(libraryId).orElseThrow(() -> new RuntimeException("Library not found")));
         return libroRepository.save(libro);
     }
 }

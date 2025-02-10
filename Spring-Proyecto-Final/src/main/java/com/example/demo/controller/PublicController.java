@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 /**
  * Controlador público que maneja las solicitudes accesibles sin autenticación.
  */
@@ -31,6 +34,9 @@ public class PublicController {
      *
      * @return ResponseEntity con la lista de usuarios y el estado HTTP OK.
      */
+    @Operation(summary = "Obtener todos los usuarios", description = "Devuelve la lista de todos los usuarios registrados en el sistema")
+    @ApiResponse(responseCode = "200", description = "Usuarios obtenidos con éxito")
+    @ApiResponse(responseCode = "401", description = "Error al obtener los usuarios")
     @GetMapping("/list")
     public ResponseEntity<List<User>> getAllUsers() {
         // Obtener la lista de todos los usuarios
@@ -48,6 +54,9 @@ public class PublicController {
      *
      * @return ResponseEntity con la lista actualizada de usuarios y el estado HTTP OK.
      */
+    @Operation(summary = "Crear un nuevo usuario aleatorio", description = "Crea un usuario aleatorio para pruebas y devuelve la lista actualizada de usuarios")
+    @ApiResponse(responseCode = "200", description = "Nuevo usuario creado con éxito")
+    @ApiResponse(responseCode = "401", description = "Error al crear el nuevo usuario")
     @GetMapping("/newrandomuser")
     public ResponseEntity<List<User>> newRandomUser() {
         // Crear un nuevo usuario con un nombre de usuario aleatorio y una contraseña codificada

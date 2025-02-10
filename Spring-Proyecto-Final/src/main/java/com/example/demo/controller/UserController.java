@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 
 @RestController
 @RequestMapping("/users")
@@ -27,7 +30,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
+    
+    @Operation(summary = "Crear un nuevo usuario", description = "Crea un nuevo usuario en el sistema")
+    @ApiResponse(responseCode = "201", description = "Usuario creado con éxito")
+    @ApiResponse(responseCode = "401", description = "Error al crear el usuario")
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
@@ -46,6 +52,9 @@ public class UserController {
      *
      * @return ResponseEntity con la lista de usuarios y el estado HTTP OK.
      */
+    @Operation(summary = "Obtener todos los usuarios", description = "Devuelve la lista de usuarios")
+    @ApiResponse(responseCode = "200", description = "Usuarios obtenidos con éxito")
+    @ApiResponse(responseCode = "401", description = "Error al obtener los usuarios")
     @GetMapping("/list")
     public ResponseEntity<List<User>> getAllUsers() {
         // Obtener la lista de todos los usuarios
@@ -57,6 +66,9 @@ public class UserController {
     }
     
  // Actualizar un usuario
+    @Operation(summary = "Actualizar un usuario", description = "Actualiza los datos de un usuario existente")
+    @ApiResponse(responseCode = "200", description = "Usuario actualizado con éxito")
+    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         user.setId(id);
@@ -64,6 +76,9 @@ public class UserController {
     }
 
     // Eliminar un usuario
+    @Operation(summary = "Eliminar un usuario", description = "Elimina un usuario existente del sistema")
+    @ApiResponse(responseCode = "204", description = "Usuario eliminado con éxito")
+    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
