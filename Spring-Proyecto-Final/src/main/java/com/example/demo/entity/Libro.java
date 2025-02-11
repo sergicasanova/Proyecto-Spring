@@ -1,18 +1,21 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 public class Libro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "Identificador único del libro", example = "1")
+    @Schema(description = "Identificador único del libro se autogenera")
     private Long id;
 
     @Schema(description = "Título del libro", example = "El Gran Gatsby", required = true, minLength = 3, maxLength = 255)
@@ -24,8 +27,9 @@ public class Libro {
     @Schema(description = "Género del libro", example = "Ficción", required = false)
     private String genre;
 
-    @ManyToOne  // Relación muchos a uno con Biblioteca
-    @Schema(description = "Biblioteca a la que pertenece el libro", required = false)
+    @ManyToOne
+    @JsonBackReference 
+    @JoinColumn(name = "biblioteca_id")// Relación muchos a uno con Biblioteca
     private Biblioteca biblioteca;
 
     // Getters y setters
