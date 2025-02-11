@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
@@ -21,10 +22,8 @@ import com.example.demo.repository.UserRepository;
 @Service
 public class UserService implements UserDetailsService {
 	
-    private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
     private UserRepository userRepository;
-
     /**
      * Carga un usuario por su nombre de usuario.
      *
@@ -62,7 +61,10 @@ public class UserService implements UserDetailsService {
      * @return El usuario guardado.
      */
     public User saveUser(User user) {
-    	user.setPassword(passwordEncoder.encode(user.getPassword()));
+    	Optional<User> existingUser = userRepository.findByUserName(user.getUserName());
+        if (existingUser.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre de usuario ya está en uso");
+        }
         return userRepository.save(user);
     }
 
@@ -73,7 +75,6 @@ public class UserService implements UserDetailsService {
      * @return Un Optional que contiene el usuario encontrado, o vacío si no se encuentra.
      */
     public Optional<User> getByUserName(String userName) {
-        System.out.println("Buscando usuario con nombre: " + userName);
         return userRepository.findByUserName(userName);
     }
     

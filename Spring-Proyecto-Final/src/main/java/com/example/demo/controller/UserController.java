@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,21 +32,31 @@ public class UserController {
     @Autowired
     private UserService userService;
     
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     @Operation(summary = "Crear un nuevo usuario", description = "Crea un nuevo usuario en el sistema")
     @ApiResponse(responseCode = "201", description = "Usuario creado con éxito")
     @ApiResponse(responseCode = "401", description = "Error al crear el usuario")
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
+            // Encriptar la contraseña antes de pasársela al servicio
             logger.info("Intentando crear usuario: {}", user);
+            
+            // Encriptamos la contraseña
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            
+            // Llamamos al servicio para guardar el usuario
             User savedUser = userService.saveUser(user);
-            return ResponseEntity.ok(savedUser);
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);  // Usuario creado con éxito (201)
         } catch (Exception e) {
             logger.error("Error al crear el usuario: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
     
     /**
      * Endpoint para obtener la lista de todos los usuarios.
