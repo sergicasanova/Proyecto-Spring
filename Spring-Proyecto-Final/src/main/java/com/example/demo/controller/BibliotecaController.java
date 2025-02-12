@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +56,15 @@ public class BibliotecaController {
     @ApiResponse(responseCode = "201", description = "Biblioteca creada con éxito", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Biblioteca.class)))
     @ApiResponse(responseCode = "400", description = "Error de validación de datos")
     public Biblioteca createBiblioteca(@RequestBody Biblioteca biblioteca) {
+        // Verificar si el usuario tiene el rol de ADMIN
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        
+        // Si el rol no es ADMIN, devolver un error
+        if (!userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new RuntimeException("No tienes permisos para crear una biblioteca");
+        }
+
         return bibliotecaService.createBiblioteca(biblioteca);
     }
 
@@ -63,8 +75,18 @@ public class BibliotecaController {
     @ApiResponse(responseCode = "404", description = "Biblioteca no encontrada")
     @ApiResponse(responseCode = "400", description = "Error de validación de datos")
     public Biblioteca updateBiblioteca(@PathVariable Long id, @RequestBody Biblioteca biblioteca) {
+        // Verificar si el usuario tiene el rol de ADMIN
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        
+        // Si el rol no es ADMIN, devolver un error
+        if (!userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new RuntimeException("No tienes permisos para actualizar esta biblioteca");
+        }
+
         return bibliotecaService.updateBiblioteca(id, biblioteca);
     }
+
 
     // Eliminar una biblioteca
     @DeleteMapping("/{id}")
@@ -72,6 +94,15 @@ public class BibliotecaController {
     @ApiResponse(responseCode = "204", description = "Biblioteca eliminada con éxito")
     @ApiResponse(responseCode = "404", description = "Biblioteca no encontrada")
     public void deleteBiblioteca(@PathVariable Long id) {
+        // Verificar si el usuario tiene el rol de ADMIN
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        
+        // Si el rol no es ADMIN, devolver un error
+        if (!userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new RuntimeException("No tienes permisos para eliminar esta biblioteca");
+        }
+
         bibliotecaService.deleteBiblioteca(id);
     }
 
@@ -82,6 +113,15 @@ public class BibliotecaController {
     @ApiResponse(responseCode = "404", description = "Biblioteca no encontrada")
     @ApiResponse(responseCode = "400", description = "Error al agregar el libro a la biblioteca")
     public Biblioteca addLibroToBiblioteca(@PathVariable Long libraryId, @PathVariable Long bookId) {
+        // Verificar si el usuario tiene el rol de ADMIN
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        
+        // Si el rol no es ADMIN, devolver un error
+        if (!userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new RuntimeException("No tienes permisos para agregar libros a esta biblioteca");
+        }
+
         return bibliotecaService.addLibroToBiblioteca(libraryId, bookId);
     }
     

@@ -51,7 +51,8 @@ public class SecurityConfig {
                 .requestMatchers("/public/**").permitAll()
                 // Permitir acceso a rutas de autenticación
                 .requestMatchers("/auth/**").permitAll()
-//                .requestMatchers("/users/**").permitAll()
+                .requestMatchers("/users/**").permitAll()
+                .requestMatchers("/libros/{id}/delete").hasRole("ADMIN")
 //                .requestMatchers("/bibliotecas/**").permitAll()
 //                .requestMatchers("/libros/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html").permitAll()

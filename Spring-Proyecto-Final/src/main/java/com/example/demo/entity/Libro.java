@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +30,9 @@ public class Libro {
     @JsonBackReference 
     @JoinColumn(name = "biblioteca_id")// Relación muchos a uno con Biblioteca
     private Biblioteca biblioteca;
+
+    @Schema(description = "Indica si el libro ha sido prestado a un usuario", example = "false")
+    private boolean isPrestado;
 
     // Getters y setters
     public Long getId() {
@@ -71,5 +73,13 @@ public class Libro {
 
     public void setBiblioteca(Biblioteca biblioteca) {
         this.biblioteca = biblioteca;
+    }
+
+    public boolean isPrestado() {
+        return isPrestado;
+    }
+
+    public void setPrestado(boolean prestado) {
+        isPrestado = prestado;
     }
 }
