@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -69,65 +70,27 @@ public class LibroController {
     @Operation(summary = "Crear un nuevo libro", description = "Crea un libro en el sistema con los datos proporcionados")
     @ApiResponse(responseCode = "201", description = "Libro creado con éxito")
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Libro createLibro(@RequestBody Libro libro) {
-        // Verificar si el usuario tiene el rol de ADMIN
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        
-        if (userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
             return libroService.createLibro(libro); 
-        } else {
-            throw new RuntimeException("No tienes permisos para crear este libro");
-        }
     }
 
     // Actualizar un libro
     @Operation(summary = "Actualizar un libro", description = "Actualiza los detalles de un libro existente")
     @ApiResponse(responseCode = "200", description = "Libro actualizado con éxito")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Libro updateLibro(@PathVariable Long id, @RequestBody Libro libro) {
-        // Verificar si el usuario tiene el rol de ADMIN
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        
-        if (userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
             return libroService.updateLibro(id, libro);
-        } else {
-            throw new RuntimeException("No tienes permisos para actualizar este libro");
-        }
     }
 
     // Eliminar un libro
     @Operation(summary = "Eliminar un libro", description = "Elimina un libro específico por su ID del sistema")
     @ApiResponse(responseCode = "204", description = "Libro eliminado con éxito")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteLibro(@PathVariable Long id) {
-        // Verificar si el usuario tiene el rol de ADMIN
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        
-        if (userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
             libroService.deleteLibro(id);
-        } else {
-            throw new RuntimeException("No tienes permisos para eliminar este libro");
-        }
-    }
-
-
-    // Agregar un libro a una biblioteca
-    @Operation(summary = "Agregar un libro a una biblioteca", description = "Asocia un libro a una biblioteca específica")
-    @ApiResponse(responseCode = "200", description = "Libro agregado a la biblioteca con éxito")
-    @PostMapping("/{libraryId}")
-    public Libro addLibroToLibrary(@PathVariable Long libraryId, @RequestBody Libro libro) {
-        // Verificar si el usuario tiene el rol de ADMIN
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        
-        if (userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
-            return libroService.addLibroToLibrary(libraryId, libro);
-        } else {
-            throw new RuntimeException("No tienes permisos para agregar libros a esta biblioteca");
-        }
     }
     
     @Operation(summary = "Prestar un libro a un usuario", description = "Permite a un usuario tomar prestado un libro")
@@ -136,5 +99,13 @@ public class LibroController {
     @PostMapping("/borrow/{userId}/{libroId}")
     public Libro borrowBook(@PathVariable Long userId, @PathVariable Long libroId) {
         return libroService.borrowBook(userId, libroId);
+    }
+    
+    @Operation(summary = "Devolver un libro a la biblioteca", description = "Permite a un usuario devolver un libro a la biblioteca")
+    @ApiResponse(responseCode = "200", description = "Libro devuelto con éxito")
+    @ApiResponse(responseCode = "400", description = "El libro no está prestado o no pertenece al usuario")
+    @PutMapping("/return/{userId}/{libroId}")
+    public Libro returnBook(@PathVariable Long userId, @PathVariable Long libroId) {
+        return libroService.returnBook(userId, libroId);
     }
 }

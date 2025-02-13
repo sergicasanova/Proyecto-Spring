@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +22,7 @@ import com.example.demo.security.JwtEntryPoint;
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     // Inyección de dependencias para manejar errores de autenticación
@@ -52,7 +54,6 @@ public class SecurityConfig {
                 // Permitir acceso a rutas de autenticación
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/users/**").permitAll()
-                .requestMatchers("/libros/{id}/delete").hasRole("ADMIN")
 //                .requestMatchers("/bibliotecas/**").permitAll()
 //                .requestMatchers("/libros/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html").permitAll()

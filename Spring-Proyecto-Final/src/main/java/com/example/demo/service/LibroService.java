@@ -50,12 +50,6 @@ public class LibroService {
         libroRepository.deleteById(id);
     }
 
-    // Agregar un libro a una biblioteca
-    public Libro addLibroToLibrary(Long libraryId, Libro libro) {
-        libro.setBiblioteca(bibliotecaRepository.findById(libraryId).orElseThrow(() -> new RuntimeException("Library not found")));
-        return libroRepository.save(libro);
-    }
-
     // Buscar libros por título
     public List<Libro> searchBooksByTitle(String title) {
         return libroRepository.findByTitleContainingIgnoreCase(title);
@@ -81,6 +75,32 @@ public class LibroService {
             return libro;
         } else {
             throw new RuntimeException("El libro ya está prestado.");
+        }
+    }
+    
+    // Devolver un libro a la biblioteca
+    public Libro returnBook(Long userId, Long libroId) {
+        // Obtener el libro y usuario
+        Libro libro = libroRepository.findById(libroId).orElseThrow(() -> new RuntimeException("Libro no encontrado"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        // Verificar si el libro está prestado
+        if (libro.isPrestado()) {
+            // Marcar el libro como no prestado
+            libro.setPrestado(false);
+            
+            // Eliminar el libro de la lista de libros prestados del usuario
+            user.getBooks().remove(libro);
+            
+            // Guardar el libro con el estado actualizado
+            libroRepository.save(libro);
+            
+            // Guardar el usuario con la lista de libros actualizada
+            userRepository.save(user);
+            
+            return libro;
+        } else {
+            throw new RuntimeException("El libro no está prestado o no pertenece al usuario");
         }
     }
 }

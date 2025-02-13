@@ -59,10 +59,10 @@ public class BibliotecaService {
         // Asociar el libro con la biblioteca
         libro.setBiblioteca(biblioteca);
 
-        // Guardamos el libro en la base de datos
+        // Guardamos el libro con la nueva asociación en la base de datos
         libroRepository.save(libro);
 
-        // Devolvemos la biblioteca con la lista de libros actualizada
+        // Devolvemos la biblioteca con la lista de libros actualizada (si se desea)
         return biblioteca;
     }
     
